@@ -18,3 +18,72 @@ model User {
   email String  @unique
   name  String?
 }
+
+model Candidate {
+  id          Int          @id @default(autoincrement())
+  firstName   String
+  lastName    String
+  email       String       @unique
+  phone       String
+  address     String?
+  linkedIn    String?
+  portfolio   String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  educations  Education[]
+  experiences Experience[]
+  documents   Document[]
+
+  @@index([email])
+  @@index([lastName, firstName])
+}
+
+model Education {
+  id           Int       @id @default(autoincrement())
+  candidateId  Int
+  institution  String
+  degree       String
+  fieldOfStudy String
+  startDate    DateTime
+  endDate      DateTime?
+  current      Boolean   @default(false)
+  description  String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  candidate    Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  @@index([candidateId])
+  @@index([institution])
+}
+
+model Experience {
+  id          Int       @id @default(autoincrement())
+  candidateId Int
+  company     String
+  position    String
+  description String?
+  startDate   DateTime
+  endDate     DateTime?
+  current     Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  @@index([candidateId])
+  @@index([company])
+}
+
+model Document {
+  id           Int       @id @default(autoincrement())
+  candidateId  Int
+  fileName     String
+  originalName String
+  fileType     String
+  fileSize     Int
+  filePath     String
+  documentType String // 'resume', 'cover_letter', 'other'
+  uploadedAt   DateTime  @default(now())
+  candidate    Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  @@index([candidateId])
+}

@@ -1,24 +1,41 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import CandidateForm from "./components/CandidateForm";
+import CandidateList from "./components/CandidateList";
+import "./App.css";
+
+type View = "list" | "form";
 
 function App() {
+  const [currentView, setCurrentView] = useState<View>("list");
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const handleShowForm = () => {
+    setCurrentView("form");
+  };
+
+  const handleShowList = () => {
+    setCurrentView("list");
+  };
+
+  const handleFormSuccess = () => {
+    // Refresh the list and go back to it
+    setRefreshTrigger((prev) => prev + 1);
+    setCurrentView("list");
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {currentView === "list" ? (
+        <CandidateList
+          onAddNew={handleShowForm}
+          refreshTrigger={refreshTrigger}
+        />
+      ) : (
+        <CandidateForm
+          onSuccess={handleFormSuccess}
+          onCancel={handleShowList}
+        />
+      )}
     </div>
   );
 }
